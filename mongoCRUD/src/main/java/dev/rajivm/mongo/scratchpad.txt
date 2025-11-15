@@ -1,0 +1,23 @@
+mongosh "mongodb+srv://cluster0.o6ebscy.mongodb.net/" --apiVersion 1 --username musunururajiv
+
+Github copilot:
+to revisit:
+shortcuts to see/ accept multiple suggestions and partial suggestions: https://docs.github.com/en/copilot/how-tos/get-code-suggestions/get-ide-code-suggestions
+
+Coding task:
+To try on work enterprise plan: /task in copilot chat to do something in the background
+
+Creating custom agent (custom coding agent):
+https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents - need to review further maybe after getting a pro license
+
+Code review and create commit message with copilot in intellij:
+Create commit message worked
+code review threw a error, not sure if it is a pro feature
+Probably need to get pro license
+
+Copilot spaces:
+Got pro license, updated mcp.json to connect with github mcp with and without PAT, but not able to connect to my copilot space
+https://docs.github.com/en/copilot/how-tos/provide-context/use-copilot-spaces/use-copilot-spaces
+
+
+
