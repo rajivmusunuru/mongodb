@@ -56,7 +56,6 @@ public class MoviesDao {
         return moviesCollection.deleteMany(query);
     }
 
-    // TODO
-    // transactions
+
 
 }

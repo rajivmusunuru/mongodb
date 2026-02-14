@@ -9,6 +9,7 @@ import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import dev.rajivm.mongo.MongoClientProvider;
 import dev.rajivm.mongo.MoviesDao;
+import dev.rajivm.mongo.UserDao;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -109,6 +110,11 @@ public class Main {
             moviesDao.findMovies(Filters.eq("title", "Nomadland 2")).forEach(doc -> {
                 System.out.println(doc.toJson());
             });
+
+            System.out.println(" transaction to delete user and user's comments");
+            UserDao userDao=new UserDao(dbName);
+            String transactionsResult=userDao.deleteUserAndCommentsTransaction("nikolaj_coster-waldau@gameofthron.es");
+            System.out.println(transactionsResult);
         }
         catch (Exception e){
             System.err.println("MongoDB demo failed: " + e.getMessage());

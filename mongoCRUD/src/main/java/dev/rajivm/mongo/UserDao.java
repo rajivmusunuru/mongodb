@@ -1,6 +1,8 @@
 package dev.rajivm.mongo;
 
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.TransactionBody;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
@@ -13,13 +15,43 @@ import java.util.List;
 import java.util.UUID;
 
 public class UserDao {
-    private final MongoCollection<Document> collection;
+    private final MongoCollection<Document> usersCollection;
+    private final MongoCollection<Document> commentsCollection;
 
-    public UserDao(String dbName, String collectionName) {
-        this.collection = MongoClientProvider.getDatabase(dbName).getCollection(collectionName);
+    public UserDao(String dbName) {
+        this.usersCollection = MongoClientProvider.getDatabase(dbName).getCollection("users");
+        this.commentsCollection = MongoClientProvider.getDatabase(dbName).getCollection("comments");
     }
 
-    public User create(User user) {
+    // TODO
+    // transactions
+    public String deleteUserAndCommentsTransaction(String userEmail) {
+        // start a client session
+        ClientSession session = MongoClientProvider.getClient().startSession();
+        TransactionBody<String> txBody = new TransactionBody<String>() {
+            @Override
+            public String execute() {
+                // delete all user's comments
+                DeleteResult deleteCommentsRes = commentsCollection.deleteMany(session, Filters.eq("email", userEmail));
+                // delete user
+                DeleteResult deleteUserRes = usersCollection.deleteOne(session, Filters.eq("email", userEmail));
+                return "User and comments for email " + userEmail + " deleted. Comments deleted: " + deleteCommentsRes.getDeletedCount() + ", User deleted: " + deleteUserRes.getDeletedCount();
+            }
+        };
+
+        try {
+            return session.withTransaction(txBody);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return "User and user comments deletion failed";
+    }
+
+
+
+    /*public User create(User user) {
         if (user.getId() == null || user.getId().isBlank()) {
             user.setId(UUID.randomUUID().toString());
         }
@@ -52,6 +84,8 @@ public class UserDao {
     public boolean delete(String id) {
         DeleteResult res = collection.deleteOne(Filters.eq("_id", id));
         return res.getDeletedCount() > 0;
-    }
+    }*/
+
+
 }
 
