@@ -23,7 +23,6 @@ public class UserDao {
         this.commentsCollection = MongoClientProvider.getDatabase(dbName).getCollection("comments");
     }
 
-    // TODO
     // transactions
     public String deleteUserAndCommentsTransaction(String userEmail) {
         // start a client session

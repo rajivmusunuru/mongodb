@@ -1,8 +1,9 @@
 package dev.rajivm.mongo;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.InsertOneResult;
@@ -10,6 +11,7 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -55,6 +57,27 @@ public class MoviesDao {
     public DeleteResult deleteMany(Bson query) {
         return moviesCollection.deleteMany(query);
     }
+
+    public AggregateIterable<Document> matchGenreStage(){
+        Bson matchStage=Aggregates.match(Filters.eq("genres", "Drama"));
+        Bson limitStage=Aggregates.limit(5);
+        return moviesCollection.aggregate(Arrays.asList(matchStage, limitStage));
+    }
+
+    public AggregateIterable<Document> matchAndGroupGenreByYearStages(){
+        Bson matchStage=Aggregates.match(Filters.eq("genres", "Drama"));
+        Bson groupStage=Aggregates.group("$year", Accumulators.sum("count", 1));
+        return moviesCollection.aggregate(Arrays.asList(matchStage, groupStage));
+    }
+
+    public AggregateIterable<Document> matchSortAndProjectStages(){
+        Bson matchStage=Aggregates.match(Filters.gte("imdb.rating", 9));
+        Bson sortStage=Aggregates.sort(Sorts.orderBy(Sorts.descending("year")));
+        Bson projectStage=Aggregates.project(Projections.fields(Projections.include("title", "year", "imdb.rating"), Projections.excludeId()));
+        return moviesCollection.aggregate(Arrays.asList(matchStage, sortStage, projectStage));
+    }
+
+
 
 
 

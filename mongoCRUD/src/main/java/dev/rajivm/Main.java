@@ -115,6 +115,17 @@ public class Main {
             UserDao userDao=new UserDao(dbName);
             String transactionsResult=userDao.deleteUserAndCommentsTransaction("nikolaj_coster-waldau@gameofthron.es");
             System.out.println(transactionsResult);
+
+            // aggregation examples
+            System.out.println("##### match stage example #####");
+            moviesDao.matchGenreStage().forEach(document -> System.out.println(document.toJson()));
+
+            System.out.println("##### match and group stages example #####");
+            moviesDao.matchAndGroupGenreByYearStages().forEach(document -> System.out.println(document.toJson()));
+
+            System.out.println("##### match, sort and project stages example #####");
+            moviesDao.matchSortAndProjectStages().forEach(document -> System.out.println(document.toJson()));
+
         }
         catch (Exception e){
             System.err.println("MongoDB demo failed: " + e.getMessage());
